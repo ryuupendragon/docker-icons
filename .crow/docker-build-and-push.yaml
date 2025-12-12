@@ -12,7 +12,7 @@ steps:
       repo: ryuupendragon/icons,ghcr.io/ryuupendragon/icons
       dockerfile: Dockerfile
       platforms: linux/amd64,linux/arm64/v8,linux/arm/v7
-      tag: 2.1.0,latest
+      tag: 2.2.0,latest
       logins:
         - registry: https://index.docker.io/v1/
           username: ryuupendragon
