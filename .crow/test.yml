@@ -1,4 +1,8 @@
 when:
+  - event: push
+    branch: main
+    path:
+      exclude: ['README.md']
   - event: manual
 
 labels:
