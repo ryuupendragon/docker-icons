@@ -2,7 +2,7 @@ when:
   - event: manual
 
 labels:
-  - platform: linux/amd64
+  platform: linux/amd64
 
 steps:
   - name: build-and-push
