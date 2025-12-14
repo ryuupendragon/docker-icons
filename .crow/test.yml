@@ -8,7 +8,7 @@ steps:
       dry_run: true
       repo: ryuupendragon/icons,ghcr.io/ryuupendragon/icons
       dockerfile: Dockerfile
-      platforms: linux/arm64/v8
+      platforms: linux/amd64,linux/arm64/v8
       tags: 2.2.0,latest
       logins:
         - registry: https://index.docker.io/v1/
