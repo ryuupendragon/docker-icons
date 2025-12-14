@@ -1,0 +1,21 @@
+when:
+  - event: manual
+
+steps:
+  - name: build-and-push
+    image: woodpeckerci/plugin-docker-buildx
+    settings:
+      dry_run: true
+      repo: ryuupendragon/icons,ghcr.io/ryuupendragon/icons
+      dockerfile: Dockerfile
+      platforms: linux/arm64/v8
+      tags: 2.2.0,latest
+      logins:
+        - registry: https://index.docker.io/v1/
+          username: ryuupendragon
+          password:
+            from_secret: DOCKERHUB_TOKEN
+        - registry: https://ghcr.io
+          username: ryuupendragon
+          password:
+            from_secret: GH_TOKEN
