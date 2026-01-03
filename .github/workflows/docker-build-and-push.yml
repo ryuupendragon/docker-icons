@@ -28,6 +28,14 @@ jobs:
           VERSION=$(cat build/VERSION | tr -d '\n')
           echo "version=$VERSION" >> $GITHUB_OUTPUT
           echo "Version from file: $VERSION"
+        
+          # Extract semantic version parts
+          MAJOR=$(echo $VERSION | cut -d. -f1)
+          MINOR=$(echo $VERSION | cut -d. -f1-2)
+          
+          echo "major_version=$MAJOR" >> $GITHUB_OUTPUT
+          echo "minor_version=$MINOR" >> $GITHUB_OUTPUT
+          echo "Major: $MAJOR, Minor: $MINOR"
       - 
         name: Set up QEMU
         uses: docker/setup-qemu-action@v3.7.0
@@ -59,6 +67,8 @@ jobs:
             ${{ vars.DOCKERHUB_USERNAME }}/icons
           tags: |
             type=raw,value=${{ steps.version.outputs.version }}
+            type=raw,value=${{ steps.version.outputs.major_version }}
+            type=raw,value=${{ steps.version.outputs.minor_version }}
             type=sha,format=long,prefix=sha-
             type=raw,value=latest
       - 
