@@ -66,10 +66,10 @@ jobs:
             ghcr.io/${{ vars.GH_USERNAME }}/icons
             ${{ vars.DOCKERHUB_USERNAME }}/icons
           tags: |
-            type=raw,value=${{ steps.version.outputs.version }}
+            type=sha,format=long,prefix=sha-
             type=raw,value=${{ steps.version.outputs.major_version }}
             type=raw,value=${{ steps.version.outputs.minor_version }}
-            type=sha,format=long,prefix=sha-
+            type=raw,value=${{ steps.version.outputs.version }}
             type=raw,value=latest
       - 
         name: Build and push
