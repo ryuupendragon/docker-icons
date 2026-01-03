@@ -1,0 +1,77 @@
+name: Build and Push Docker Images
+
+on:
+  workflow_dispatch:
+  push:
+    branches: [ main ]
+    paths:
+      - 'build/**'
+      - '.github/workflows/**'
+  pull_request:
+    branches: [ main ]
+    paths:
+      - 'build/**'
+      - '.github/workflows/**'
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - 
+        name: Checkout code
+        uses: actions/checkout@v6.0.1
+      - 
+        name: Read Version from file
+        id: version
+        run: |
+          VERSION=$(cat build/VERSION | tr -d '\n')
+          echo "version=$VERSION" >> $GITHUB_OUTPUT
+          echo "Version from file: $VERSION"
+      - 
+        name: Set up QEMU
+        uses: docker/setup-qemu-action@v3.7.0
+      - 
+        name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3.11.1
+        with:
+          driver-opts: image=moby/buildkit:v0.23.2@sha256:ddd1ca44b21eda906e81ab14a3d467fa6c39cd73b9a39df1196210edcb8db59e
+      - 
+        name: Login to GitHub Container Registry
+        uses: docker/login-action@v3.6.0
+        with:
+          registry: ghcr.io
+          username: ${{ vars.GH_USERNAME }}
+          password: ${{ secrets.GH_TOKEN }}
+      - 
+        name: Login to Docker Hub
+        uses: docker/login-action@v3.6.0
+        with:
+          username: ${{ vars.DOCKERHUB_USERNAME }}
+          password: ${{ secrets.DOCKERHUB_TOKEN }}
+      - 
+        name: Extract metadata (tags, labels) for Docker
+        id: meta
+        uses: docker/metadata-action@v5.10.0
+        with:
+          images: |
+            ghcr.io/${{ vars.GH_USERNAME }}/icons
+            ${{ vars.DOCKERHUB_USERNAME }}/icons
+          tags: |
+            type=raw,value=${{ steps.version.outputs.version }}
+            type=sha,format=long,prefix=sha-
+            type=raw,value=latest
+      - 
+        name: Build and push
+        uses: docker/build-push-action@v6.18.0
+        with:
+          context: ./build
+          file: dockerfile
+          push: ${{ github.event_name != 'pull_request' }}
+          tags: ${{ steps.meta.outputs.tags }}
+          labels: ${{ steps.meta.outputs.labels }}
+          platforms: linux/amd64,linux/arm64,linux/arm/v7
+          cache-from: type=gha
+          cache-to: type=gha,mode=max
+          build-args: |
+            BUILDKIT_INLINE_CACHE=1
